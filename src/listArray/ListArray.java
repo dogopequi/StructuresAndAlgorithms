@@ -1,10 +1,10 @@
 package listArray;
 
-public class ListArray {
+public class ListArray<T> {
 	class Node
 	{
 		Node next;
-		int value;
+		T value;
 		Node prev;
 	}
 	int n = 0;
@@ -23,7 +23,7 @@ public class ListArray {
 		}
 		System.out.println();
 	}
-	void push(int value)
+	void push(T value)
 	{
 		Node l = new Node();
 		l.value = value;
@@ -39,10 +39,11 @@ public class ListArray {
 		}
 		n++;
 	}
-	int pop()
+	T pop()
 	{
-		if(first == null) return 0;
-		int value = last.value;
+		if(first == null) throw new IllegalStateException("Empty stack.");
+		T value = last.value;
+		last.value = null;
 		if(last.prev == null)
 		{
 			first = null;

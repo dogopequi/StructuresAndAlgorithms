@@ -1,12 +1,12 @@
 package stackArray;
 
 
-public class StackArray {
-	int[] arr;
+public class StackArray<T> {
+	T[] arr;
 	int n = 0;
 	StackArray()
 	{
-		arr = new int[1];
+		arr = (T[]) new Object[1];
 	}
 	public void print()
 	{
@@ -27,16 +27,19 @@ public class StackArray {
 		a.pop();
 		a.print();
 		}
-	public void push(int i)
+	public void push(T i)
 	{
 		if(n >= arr.length)
 			resize(arr.length * 2);
 		arr[n++] = i;
 	}
-	public int pop()
+	public Object pop()
 	{
-		if(n == 0) resize(1);
-		int i = arr[--n];
+		if (n == 0) {
+            throw new IllegalStateException("Stack is empty");
+        }
+		T i = arr[--n];
+		arr[n] = null;
 		if(n <= arr.length / 4)
 			resize(arr.length / 2);
 		return i;
@@ -44,8 +47,8 @@ public class StackArray {
 	
 	public void resize(int size)
 	{
-		int[] a = new int[size];
-		for(int i = 0; i < arr.length; i++)
+		T[] a = (T[]) new Object[size];
+		for(int i = 0; i < n; i++)
 		{
 			a[i] =  arr[i];
 		}
