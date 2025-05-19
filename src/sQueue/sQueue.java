@@ -51,7 +51,7 @@ public class sQueue<T> {
 	private void resize(int size)
 	{
 		T[] a = (T[]) new Object[size];
-		for(int i = 0; i < arr.length; i++)
+		for(int i = 0; i < n; i++)
 		{
 			a[i] =  arr[i];
 		}
