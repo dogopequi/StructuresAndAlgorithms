@@ -1,10 +1,10 @@
-package sQueue;
+package arrayQueue;
 
 
-public class sQueue<T> {
+public class arrayQueue<T> {
 	T[] arr;
 	int n = 0;
-	sQueue()
+	arrayQueue()
 	{
 		arr = (T[]) new Object[1];
 	}
@@ -60,7 +60,7 @@ public class sQueue<T> {
 	
 	public static void main(String[] args)
 	{
-		sQueue a = new sQueue();
+		arrayQueue a = new arrayQueue();
 		a.enqueue(0);
 		a.enqueue(4);
 		a.enqueue(1);

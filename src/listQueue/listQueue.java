@@ -1,8 +1,6 @@
-package lQueue;
+package listQueue;
 
-import sQueue.sQueue;
-
-public class lQueue<T> {
+public class listQueue<T> {
 	class Node
 	{
 		Node next;
@@ -12,7 +10,7 @@ public class lQueue<T> {
 	int n = 0;
 	Node first;
 	Node last;
-	lQueue()
+	listQueue()
 	{
 	}
 	public void print()
@@ -57,7 +55,7 @@ public class lQueue<T> {
 	}
 	public static void main(String[] args)
 	{
-		lQueue a = new lQueue();
+		listQueue a = new listQueue();
 		a.enqueue(0);
 		a.enqueue(4);
 		a.enqueue(1);

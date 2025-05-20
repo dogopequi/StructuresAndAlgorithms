@@ -1,6 +1,6 @@
-package listArray;
+package StackList;
 
-public class ListArray<T> {
+public class StackList<T> {
 	class Node
 	{
 		Node next;
@@ -10,7 +10,7 @@ public class ListArray<T> {
 	int n = 0;
 	Node first;
 	Node last;
-	ListArray()
+	StackList()
 	{
 	}
 	public void print()
@@ -59,7 +59,7 @@ public class ListArray<T> {
 	}
 	public static void main(String[] args)
 	{
-		ListArray la = new ListArray();
+		StackList la = new StackList();
 		la.push(0);
 		la.push(2);
 		la.push(4);
