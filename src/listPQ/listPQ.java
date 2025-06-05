@@ -1,5 +1,6 @@
 package listPQ;
 
+import java.util.NoSuchElementException;
 
 public class listPQ<T extends Comparable<T>> {
 	class Node
@@ -34,17 +35,31 @@ public class listPQ<T extends Comparable<T>> {
 	
 	public T delete()
 	{
-		Node max = first;
-		Node i = first;
-		while(i != null)
-		{
-			if(less(max.value, i.value)) max = i;
-			i = i.next;
-		}
-		T item = max.value;
-		max.value = first.value;
-		first = first.next;
-		return item;
+	    if (first == null) throw new NoSuchElementException("Priority queue is empty");
+
+	    Node max = first;
+	    Node prevMax = null;
+	    Node current = first;
+	    Node prev = null;
+
+	    while (current != null) {
+	        if (less(max.value, current.value)) {
+	            max = current;
+	            prevMax = prev;
+	        }
+	        prev = current;
+	        current = current.next;
+	    }
+
+	    // Remove max node
+	    if (prevMax == null) {
+	        // max is the first node
+	        first = first.next;
+	    } else {
+	        prevMax.next = max.next;
+	    }
+
+	    return max.value;
 	}
 	
 	private static boolean less(Comparable a, Comparable b)

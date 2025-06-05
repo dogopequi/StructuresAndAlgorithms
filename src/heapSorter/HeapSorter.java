@@ -34,10 +34,11 @@ public class HeapSorter {
 	
 	public static void Sort(int[] array)
 	{
+		heapify(array, array.length, 0);
 		for(int i = array.length - 1; i >= 0; i--)
 		{
 			swap(array, 0, i);
-			heapify(array, i, 0);
+			sink(array, i, 0);
 		}
 	}
 	

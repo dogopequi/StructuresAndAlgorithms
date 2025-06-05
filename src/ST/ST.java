@@ -9,21 +9,18 @@ public class ST<Key extends Comparable<Key>, Value> {
         public Key key;
         public Value value;
         public Node left, right;
-        public int size;
 
         public Node(Key key, Value value) {
             this.key = key;
             this.value = value;
-            this.size = 1;
         }
     }
 
     private Node root;
-    
+
     public static void main(String[] args) {
         ST<String, Integer> st = new ST<>();
 
-        System.out.println("== Inserting ==");
         st.put("E", 5);
         st.put("A", 1);
         st.put("C", 3);
@@ -33,59 +30,17 @@ public class ST<Key extends Comparable<Key>, Value> {
         st.put("F", 6);
         st.put("H", 8);
 
-        System.out.println("Size: " + st.size()); // 8
+        System.out.println("Value for A: " + st.get("A"));
+        System.out.println("Min key: " + st.min());
+        System.out.println("Max key: " + st.max());
 
-        System.out.println("== Getting Keys ==");
-        System.out.println("Value for A: " + st.get("A")); // 1
-        System.out.println("Value for G: " + st.get("G")); // 7
-        System.out.println("Value for Z (not present): " + st.get("Z")); // null
+        st.delete("A");
+        st.delete("H");
+        st.delete("D");
 
-        System.out.println("== Min / Max ==");
-        System.out.println("Min key: " + st.min()); // A
-        System.out.println("Max key: " + st.max()); // H
-
-        System.out.println("== Floor / Ceiling ==");
-        System.out.println("Floor of E: " + st.floor("E")); // E
-        System.out.println("Floor of D.5: " + st.floor("D.5")); // D
-        System.out.println("Ceiling of D: " + st.ceiling("D")); // D
-        System.out.println("Ceiling of D.5: " + st.ceiling("D.5")); // E
-
-        System.out.println("== Rank / Select ==");
-        System.out.println("Rank of D: " + st.rank("D")); // 3
-        System.out.println("Select key with rank 3: " + st.select(3)); // D
-
-        System.out.println("== Range Queries ==");
-        System.out.println("Size of range [B, F]: " + st.size("B", "F")); // 5
-
-        System.out.println("== Keys in Range B to F ==");
-        for (String key : st.keys("B", "F")) {
-            System.out.println(key + " -> " + st.get(key));
-        }
-
-        System.out.println("== All Keys In Order ==");
         for (String key : st.keys()) {
             System.out.println(key + " -> " + st.get(key));
         }
-
-        System.out.println("== Deleting ==");
-        st.delete("A"); // delete min
-        st.delete("H"); // delete max
-        st.delete("D"); // delete internal node
-
-        System.out.println("Keys after deletion:");
-        for (String key : st.keys()) {
-            System.out.println(key + " -> " + st.get(key));
-        }
-
-        System.out.println("Height of tree: " + st.height());
-    }
-
-    private int size(Node node) {
-        return node == null ? 0 : node.size;
-    }
-
-    public int size() {
-        return size(root);
     }
 
     public boolean isEmpty() {
@@ -102,7 +57,6 @@ public class ST<Key extends Comparable<Key>, Value> {
         if (cmp < 0) x.left = put(x.left, key, val);
         else if (cmp > 0) x.right = put(x.right, key, val);
         else x.value = val;
-        x.size = 1 + size(x.left) + size(x.right);
         return x;
     }
 
@@ -138,7 +92,6 @@ public class ST<Key extends Comparable<Key>, Value> {
             x.right = deleteMin(t.right);
             x.left = t.left;
         }
-        x.size = size(x.left) + size(x.right) + 1;
         return x;
     }
 
@@ -150,7 +103,6 @@ public class ST<Key extends Comparable<Key>, Value> {
     private Node deleteMin(Node x) {
         if (x.left == null) return x.right;
         x.left = deleteMin(x.left);
-        x.size = 1 + size(x.left) + size(x.right);
         return x;
     }
 
@@ -162,17 +114,7 @@ public class ST<Key extends Comparable<Key>, Value> {
     private Node deleteMax(Node x) {
         if (x.right == null) return x.left;
         x.right = deleteMax(x.right);
-        x.size = 1 + size(x.left) + size(x.right);
         return x;
-    }
-
-    public int height() {
-        return height(root);
-    }
-
-    private int height(Node x) {
-        if (x == null) return 0;
-        return 1 + Math.max(height(x.left), height(x.right));
     }
 
     public Key min() {
@@ -223,60 +165,21 @@ public class ST<Key extends Comparable<Key>, Value> {
         return (t != null) ? t : x;
     }
 
-    public int rank(Key key) {
-        return rank(key, root);
-    }
-
-    private int rank(Key key, Node x) {
-        if (x == null) return 0;
-        int cmp = key.compareTo(x.key);
-        if (cmp < 0) return rank(key, x.left);
-        else if (cmp > 0) return 1 + size(x.left) + rank(key, x.right);
-        else return size(x.left);
-    }
-
-    public Key select(int k) {
-        Node x = select(root, k);
-        return x == null ? null : x.key;
-    }
-
-    private Node select(Node x, int k) {
-        if (x == null) return null;
-        int t = size(x.left);
-        if (t > k) return select(x.left, k);
-        else if (t < k) return select(x.right, k - t - 1);
-        else return x;
-    }
-
-    public int size(Key lo, Key hi) {
-        if (lo.compareTo(hi) > 0) return 0;
-        if (contains(hi)) return rank(hi) - rank(lo) + 1;
-        else return rank(hi) - rank(lo);
-    }
-
     public Iterable<Key> keys() {
-        return keys(min(), max());
-    }
-
-    public Iterable<Key> keys(Key lo, Key hi) {
         Queue<Key> q = new Queue<>();
-        keys(root, q, lo, hi);
+        inorder(root, q);
         return q;
     }
 
-    private void keys(Node x, Queue<Key> q, Key lo, Key hi) {
+    private void inorder(Node x, Queue<Key> q) {
         if (x == null) return;
-        int cmplo = lo.compareTo(x.key);
-        int cmphi = hi.compareTo(x.key);
-        if (cmplo < 0) keys(x.left, q, lo, hi);
-        if (cmplo <= 0 && cmphi >= 0) q.enqueue(x.key);
-        if (cmphi > 0) keys(x.right, q, lo, hi);
+        inorder(x.left, q);
+        q.enqueue(x.key);
+        inorder(x.right, q);
     }
 
     private class Queue<T> implements Iterable<T> {
-        private int N = 0;
-        private NodeQ first;
-        private NodeQ last;
+        private NodeQ first, last;
 
         private class NodeQ {
             T item;
@@ -284,37 +187,24 @@ public class ST<Key extends Comparable<Key>, Value> {
         }
 
         public void enqueue(T item) {
-            NodeQ oldlast = last;
+            NodeQ oldLast = last;
             last = new NodeQ();
             last.item = item;
-            if (isEmpty()) first = last;
-            else oldlast.next = last;
-            N++;
-        }
-
-        public boolean isEmpty() {
-            return first == null;
+            if (first == null) first = last;
+            else oldLast.next = last;
         }
 
         public Iterator<T> iterator() {
-            return new QueueIterator();
-        }
-
-        private class QueueIterator implements Iterator<T> {
-            private NodeQ current = first;
-
-            public boolean hasNext() {
-                return current != null;
-            }
-
-            public T next() {
-                if (!hasNext()) throw new NoSuchElementException();
-                T item = current.item;
-                current = current.next;
-                return item;
-            }
-
-            public void remove() {}
+            return new Iterator<T>() {
+                private NodeQ current = first;
+                public boolean hasNext() { return current != null; }
+                public T next() {
+                    if (!hasNext()) throw new NoSuchElementException();
+                    T item = current.item;
+                    current = current.next;
+                    return item;
+                }
+            };
         }
     }
 }
